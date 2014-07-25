@@ -1,6 +1,7 @@
 <?php
 namespace Codeception\Coverage\Subscriber;
 
+use Codeception\Coverage\Filter;
 use Codeception\Events;
 use Codeception\Configuration;
 use Codeception\Event\PrintResultEvent;
@@ -31,6 +32,12 @@ class Printer implements EventSubscriberInterface {
         $this->logDir = Configuration::outputDir();
         $this->settings = array_merge($this->settings, Configuration::config()['coverage']);
         self::$coverage = new \PHP_CodeCoverage();
+
+        // Apply filter
+        $filter = new Filter(self::$coverage);
+        $filter
+            ->whiteList(Configuration::config())
+            ->blackList(Configuration::config());
     }
 
     protected function absolutePath($path)
